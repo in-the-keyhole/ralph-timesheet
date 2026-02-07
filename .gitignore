@@ -1,0 +1,22 @@
+# Maven
+api/target/
+*.jar
+!api/.mvn/wrapper/maven-wrapper.jar
+
+# Node
+ui/node_modules/
+ui/dist/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
