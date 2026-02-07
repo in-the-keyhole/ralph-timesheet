@@ -1,7 +1,7 @@
 package com.keyhole.timesheet.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.keyhole.timesheet.dto.EmployeeRequest;
+import com.keyhole.timesheet.dto.ProjectRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class EmployeeControllerTest {
+class ProjectControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -30,73 +30,76 @@ class EmployeeControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void shouldGetAllEmployees() throws Exception {
-        mockMvc.perform(get("/api/v1/employees"))
+    void shouldGetAllProjects() throws Exception {
+        mockMvc.perform(get("/api/v1/projects"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(3))));
     }
 
     @Test
-    void shouldGetEmployeeById() throws Exception {
-        mockMvc.perform(get("/api/v1/employees/1"))
+    void shouldFilterActiveProjects() throws Exception {
+        mockMvc.perform(get("/api/v1/projects").param("active", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@keyhole.com"));
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test
-    void shouldReturn404ForNonExistentEmployee() throws Exception {
-        mockMvc.perform(get("/api/v1/employees/999"))
+    void shouldGetProjectById() throws Exception {
+        mockMvc.perform(get("/api/v1/projects/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Timesheet App"))
+                .andExpect(jsonPath("$.code").value("TSA"));
+    }
+
+    @Test
+    void shouldReturn404ForNonExistentProject() throws Exception {
+        mockMvc.perform(get("/api/v1/projects/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void shouldCreateEmployee() throws Exception {
-        EmployeeRequest request = EmployeeRequest.builder()
-                .firstName("Alice")
-                .lastName("Williams")
-                .email("alice.williams@keyhole.com")
-                .department("Marketing")
+    void shouldCreateProject() throws Exception {
+        ProjectRequest request = ProjectRequest.builder()
+                .name("New Project")
+                .code("NPJ")
+                .description("A new project")
+                .active(true)
                 .build();
 
-        mockMvc.perform(post("/api/v1/employees")
+        mockMvc.perform(post("/api/v1/projects")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.firstName").value("Alice"))
-                .andExpect(jsonPath("$.email").value("alice.williams@keyhole.com"));
+                .andExpect(jsonPath("$.name").value("New Project"));
     }
 
     @Test
-    void shouldReturn400ForInvalidEmployee() throws Exception {
-        EmployeeRequest request = EmployeeRequest.builder()
-                .firstName("")
-                .lastName("")
-                .email("invalid-email")
+    void shouldReturn400ForInvalidProject() throws Exception {
+        ProjectRequest request = ProjectRequest.builder()
+                .name("")
+                .code("")
                 .build();
 
-        mockMvc.perform(post("/api/v1/employees")
+        mockMvc.perform(post("/api/v1/projects")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldUpdateEmployee() throws Exception {
-        EmployeeRequest request = EmployeeRequest.builder()
-                .firstName("John")
-                .lastName("Doe-Updated")
-                .email("john.doe@keyhole.com")
-                .department("Management")
+    void shouldUpdateProject() throws Exception {
+        ProjectRequest request = ProjectRequest.builder()
+                .name("Timesheet App Updated")
+                .code("TSA")
+                .description("Updated description")
+                .active(true)
                 .build();
 
-        mockMvc.perform(put("/api/v1/employees/1")
+        mockMvc.perform(put("/api/v1/projects/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.lastName").value("Doe-Updated"))
-                .andExpect(jsonPath("$.department").value("Management"));
+                .andExpect(jsonPath("$.name").value("Timesheet App Updated"));
     }
 }
