@@ -70,3 +70,9 @@ Mark a story `[x]` when it is fully implemented and tests pass.
 
 - [x] **S18 — Final review and cleanup**
   Ensure all backend tests pass (`./mvnw test`). Ensure all frontend tests pass (`npm test`). Ensure the frontend builds without errors (`npm run build`). Remove any unused code or dead imports. Verify the full workflow: create employee, create project, log time entries, view dashboard.
+
+## Phase 7: API Documentation
+
+- [x] **S19 — OpenAPI documentation with Swagger UI**
+  Add the `springdoc-openapi-starter-webmvc-ui` dependency to the API project. Configure OpenAPI metadata (title, description, version) in application properties or a config class. Annotate all controllers with `@Tag` descriptions. Annotate endpoints with `@Operation` summaries and `@ApiResponse` codes where appropriate. Verify Swagger UI is accessible at `/swagger-ui.html` and the OpenAPI spec is available at `/v3/api-docs`. Write an integration test that fetches the `/v3/api-docs` endpoint and asserts it returns valid JSON containing all expected paths (`/api/v1/employees`, `/api/v1/projects`, `/api/v1/time-entries`).
+
