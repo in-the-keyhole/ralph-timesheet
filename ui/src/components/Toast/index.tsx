@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
-import './Toast.css'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
 
 interface Toast {
   id: number
@@ -34,13 +35,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="toast-container">
-        {toasts.map((toast) => (
-          <div key={toast.id} className={`toast toast-${toast.type}`}>
+      {toasts.map((toast, index) => (
+        <Snackbar
+          key={toast.id}
+          open
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          sx={{ mt: `${index * 60}px` }}
+        >
+          <Alert severity={toast.type} variant="filled" sx={{ width: '100%' }}>
             {toast.message}
-          </div>
-        ))}
-      </div>
+          </Alert>
+        </Snackbar>
+      ))}
     </ToastContext.Provider>
   )
 }

@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import type { SelectChangeEvent } from '@mui/material'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Alert from '@mui/material/Alert'
 import { getEmployees } from '../../api/employees'
 import { getProjects } from '../../api/projects'
 import { createTimeEntry } from '../../api/timeEntries'
 import type { Employee, Project, TimeEntryRequest } from '../../api/types'
 import { useToast } from '../Toast'
-import './TimeEntryForm.css'
 
 interface TimeEntryFormProps {
   onSuccess?: () => void
@@ -71,90 +81,97 @@ function TimeEntryForm({ onSuccess }: TimeEntryFormProps) {
   }
 
   return (
-    <form className="time-entry-form" onSubmit={handleSubmit}>
-      <h2>New Time Entry</h2>
+    <Paper sx={{ p: 3, maxWidth: 500, mb: 3 }}>
+      <Box component="form" onSubmit={handleSubmit}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          New Time Entry
+        </Typography>
 
-      <div className="form-group">
-        <label htmlFor="employeeId">Employee</label>
-        <select
-          id="employeeId"
-          value={employeeId}
-          onChange={(e) => setEmployeeId(e.target.value)}
-          required
-        >
-          <option value="">Select employee...</option>
-          {employees.map((emp) => (
-            <option key={emp.id} value={emp.id}>
-              {emp.firstName} {emp.lastName}
-            </option>
-          ))}
-        </select>
-      </div>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel>Employee</InputLabel>
+          <Select
+            value={employeeId}
+            label="Employee"
+            onChange={(e: SelectChangeEvent) => setEmployeeId(e.target.value)}
+            required
+          >
+            <MenuItem value="">
+              <em>Select employee...</em>
+            </MenuItem>
+            {employees.map((emp) => (
+              <MenuItem key={emp.id} value={emp.id}>
+                {emp.firstName} {emp.lastName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <div className="form-group">
-        <label htmlFor="projectId">Project</label>
-        <select
-          id="projectId"
-          value={projectId}
-          onChange={(e) => setProjectId(e.target.value)}
-          required
-        >
-          <option value="">Select project...</option>
-          {projects.map((proj) => (
-            <option key={proj.id} value={proj.id}>
-              {proj.name}
-            </option>
-          ))}
-        </select>
-      </div>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel>Project</InputLabel>
+          <Select
+            value={projectId}
+            label="Project"
+            onChange={(e: SelectChangeEvent) => setProjectId(e.target.value)}
+            required
+          >
+            <MenuItem value="">
+              <em>Select project...</em>
+            </MenuItem>
+            {projects.map((proj) => (
+              <MenuItem key={proj.id} value={proj.id}>
+                {proj.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <div className="form-group">
-        <label htmlFor="date">Date</label>
-        <input
-          id="date"
+        <TextField
+          fullWidth
           type="date"
+          label="Date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={{ mb: 2 }}
         />
-      </div>
 
-      <div className="form-group">
-        <label htmlFor="hours">Hours</label>
-        <input
-          id="hours"
+        <TextField
+          fullWidth
           type="number"
-          min="0.25"
-          max="24"
-          step="0.25"
+          label="Hours"
           value={hours}
           onChange={(e) => setHours(e.target.value)}
           required
+          slotProps={{ htmlInput: { min: 0.25, max: 24, step: 0.25 } }}
+          sx={{ mb: 2 }}
         />
-      </div>
 
-      <div className="form-group">
-        <label htmlFor="description">Description</label>
-        <textarea
-          id="description"
+        <TextField
+          fullWidth
+          label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          multiline
           rows={3}
+          sx={{ mb: 2 }}
         />
-      </div>
 
-      {Object.keys(errors).length > 0 && (
-        <div className="form-errors">
-          {Object.entries(errors).map(([field, msg]) => (
-            <p key={field} className="error">{msg}</p>
-          ))}
-        </div>
-      )}
+        {Object.keys(errors).length > 0 && (
+          <Box sx={{ mb: 2 }}>
+            {Object.entries(errors).map(([field, msg]) => (
+              <Alert key={field} severity="error" sx={{ mb: 1 }}>
+                {msg}
+              </Alert>
+            ))}
+          </Box>
+        )}
 
-      <button type="submit" className="primary" disabled={submitting}>
-        {submitting ? 'Saving...' : 'Save Time Entry'}
-      </button>
-    </form>
+        <Button type="submit" variant="contained" disabled={submitting}>
+          {submitting ? 'Saving...' : 'Save Time Entry'}
+        </Button>
+      </Box>
+    </Paper>
   )
 }
 

@@ -1,5 +1,9 @@
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 
 interface Props {
   children: ReactNode
@@ -27,19 +31,26 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <h1>Something went wrong</h1>
-          <p>An unexpected error occurred. Please try refreshing the page.</p>
-          <pre style={{ color: '#dc3545', fontSize: '0.85rem' }}>
+        <Container maxWidth="sm" sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Something went wrong
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            An unexpected error occurred. Please try refreshing the page.
+          </Typography>
+          <Box
+            component="pre"
+            sx={{ color: 'error.main', fontSize: '0.85rem', mb: 2 }}
+          >
             {this.state.error?.message}
-          </pre>
-          <button
-            className="primary"
+          </Box>
+          <Button
+            variant="contained"
             onClick={() => this.setState({ hasError: false, error: null })}
           >
             Try Again
-          </button>
-        </div>
+          </Button>
+        </Container>
       )
     }
 

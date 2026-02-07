@@ -1,4 +1,15 @@
 import { useEffect, useState } from 'react'
+import Typography from '@mui/material/Typography'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
 import { getProjects } from '../../api/projects'
 import type { Project } from '../../api/types'
 
@@ -14,32 +25,34 @@ function ProjectsPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="loading">Loading projects...</div>
-  if (error) return <div className="error">{error}</div>
+  if (loading) return <Box sx={{ textAlign: 'center', py: 4 }}><CircularProgress /></Box>
+  if (error) return <Alert severity="error">{error}</Alert>
 
   return (
     <div>
-      <h1>Projects</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Description</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects.map((proj) => (
-            <tr key={proj.id}>
-              <td>{proj.name}</td>
-              <td>{proj.code}</td>
-              <td>{proj.description}</td>
-              <td>{proj.active ? 'Active' : 'Inactive'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography variant="h1" sx={{ mb: 2 }}>Projects</Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Code</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {projects.map((proj) => (
+              <TableRow key={proj.id}>
+                <TableCell>{proj.name}</TableCell>
+                <TableCell>{proj.code}</TableCell>
+                <TableCell>{proj.description}</TableCell>
+                <TableCell>{proj.active ? 'Active' : 'Inactive'}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }
