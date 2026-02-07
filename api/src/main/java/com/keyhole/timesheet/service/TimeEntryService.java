@@ -12,6 +12,7 @@ import com.keyhole.timesheet.repository.TimeEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class TimeEntryService {
     }
 
     public TimeEntryResponse create(TimeEntryRequest request) {
+        validateBusinessRules(request, null);
+
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + request.getEmployeeId()));
         Project project = projectRepository.findById(request.getProjectId())
@@ -62,6 +65,9 @@ public class TimeEntryService {
     public TimeEntryResponse update(Long id, TimeEntryRequest request) {
         TimeEntry entry = timeEntryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Time entry not found with id: " + id));
+
+        validateBusinessRules(request, entry);
+
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + request.getEmployeeId()));
         Project project = projectRepository.findById(request.getProjectId())
@@ -73,6 +79,37 @@ public class TimeEntryService {
         entry.setHours(request.getHours());
         entry.setDescription(request.getDescription());
         return toResponse(timeEntryRepository.save(entry));
+    }
+
+    private void validateBusinessRules(TimeEntryRequest request, TimeEntry existingEntry) {
+        // Hours must be in 0.25 increments
+        BigDecimal remainder = request.getHours().remainder(new BigDecimal("0.25"));
+        if (remainder.compareTo(BigDecimal.ZERO) != 0) {
+            throw new IllegalArgumentException("Hours must be in 0.25 increments");
+        }
+
+        // Hours must be between 0.25 and 24
+        if (request.getHours().compareTo(new BigDecimal("0.25")) < 0 || request.getHours().compareTo(new BigDecimal("24")) > 0) {
+            throw new IllegalArgumentException("Hours must be between 0.25 and 24");
+        }
+
+        // Date cannot be in the future
+        if (request.getDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Date cannot be in the future");
+        }
+
+        // Total hours per employee per day cannot exceed 24
+        BigDecimal existingHours = timeEntryRepository.sumHoursByEmployeeIdAndDate(
+                request.getEmployeeId(), request.getDate());
+        // If updating, subtract the existing entry's hours
+        if (existingEntry != null && existingEntry.getEmployee().getId().equals(request.getEmployeeId())
+                && existingEntry.getDate().equals(request.getDate())) {
+            existingHours = existingHours.subtract(existingEntry.getHours());
+        }
+        BigDecimal totalHours = existingHours.add(request.getHours());
+        if (totalHours.compareTo(new BigDecimal("24")) > 0) {
+            throw new IllegalArgumentException("Total hours per employee per day cannot exceed 24");
+        }
     }
 
     public void delete(Long id) {
