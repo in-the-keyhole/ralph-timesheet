@@ -1,0 +1,10 @@
+function EmployeesPage() {
+  return (
+    <div>
+      <h1>Employees</h1>
+      <p>Employee list will be displayed here.</p>
+    </div>
+  )
+}
+
+export default EmployeesPage
