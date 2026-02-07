@@ -4,9 +4,11 @@ import { getEmployees } from '../../api/employees'
 import { getTimeEntries, deleteTimeEntry, updateTimeEntry } from '../../api/timeEntries'
 import { getProjects } from '../../api/projects'
 import type { Employee, Project, TimeEntry, TimeEntryRequest } from '../../api/types'
+import { useToast } from '../../components/Toast'
 import './TimeEntries.css'
 
 function TimeEntriesPage() {
+  const { showToast } = useToast()
   const [entries, setEntries] = useState<TimeEntry[]>([])
   const [employees, setEmployees] = useState<Employee[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -37,8 +39,8 @@ function TimeEntriesPage() {
   }, [filterEmployeeId, filterStartDate, filterEndDate])
 
   useEffect(() => {
-    getEmployees().then((res) => setEmployees(res.data))
-    getProjects().then((res) => setProjects(res.data))
+    getEmployees().then((res) => setEmployees(res.data)).catch(() => {})
+    getProjects().then((res) => setProjects(res.data)).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -49,9 +51,10 @@ function TimeEntriesPage() {
     if (!confirm('Delete this time entry?')) return
     try {
       await deleteTimeEntry(id)
+      showToast('Time entry deleted')
       loadEntries()
     } catch {
-      alert('Failed to delete time entry')
+      showToast('Failed to delete time entry', 'error')
     }
   }
 
@@ -72,9 +75,10 @@ function TimeEntriesPage() {
       await updateTimeEntry(id, editData)
       setEditingId(null)
       setEditData(null)
+      showToast('Time entry updated')
       loadEntries()
     } catch {
-      alert('Failed to update time entry')
+      showToast('Failed to update time entry', 'error')
     }
   }
 

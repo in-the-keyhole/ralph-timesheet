@@ -29,7 +29,9 @@ function DashboardPage() {
   const { start, end } = useMemo(() => getWeekRange(new Date()), [])
 
   useEffect(() => {
-    getEmployees().then((res) => setEmployees(res.data))
+    getEmployees()
+      .then((res) => setEmployees(res.data))
+      .catch(() => { /* handled silently */ })
   }, [])
 
   useEffect(() => {
@@ -44,6 +46,7 @@ function DashboardPage() {
       endDate: formatDate(end),
     })
       .then((res) => setEntries(res.data))
+      .catch(() => { /* handled silently */ })
       .finally(() => setLoading(false))
   }, [selectedEmployeeId, start, end])
 

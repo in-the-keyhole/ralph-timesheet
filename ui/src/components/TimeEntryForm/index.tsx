@@ -4,6 +4,7 @@ import { getEmployees } from '../../api/employees'
 import { getProjects } from '../../api/projects'
 import { createTimeEntry } from '../../api/timeEntries'
 import type { Employee, Project, TimeEntryRequest } from '../../api/types'
+import { useToast } from '../Toast'
 import './TimeEntryForm.css'
 
 interface TimeEntryFormProps {
@@ -11,6 +12,7 @@ interface TimeEntryFormProps {
 }
 
 function TimeEntryForm({ onSuccess }: TimeEntryFormProps) {
+  const { showToast } = useToast()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [projects, setProjects] = useState<Project[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -23,8 +25,8 @@ function TimeEntryForm({ onSuccess }: TimeEntryFormProps) {
   const [description, setDescription] = useState('')
 
   useEffect(() => {
-    getEmployees().then((res) => setEmployees(res.data))
-    getProjects(true).then((res) => setProjects(res.data))
+    getEmployees().then((res) => setEmployees(res.data)).catch(() => {})
+    getProjects(true).then((res) => setProjects(res.data)).catch(() => {})
   }, [])
 
   function clearForm() {
@@ -52,6 +54,7 @@ function TimeEntryForm({ onSuccess }: TimeEntryFormProps) {
     try {
       await createTimeEntry(data)
       clearForm()
+      showToast('Time entry created successfully')
       onSuccess?.()
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
