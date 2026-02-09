@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.keyhole</groupId>
-    <artifactId>timesheet</artifactId>
+    <artifactId>ralph-timesheet</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>timesheet</name>
+    <name>ralph-timesheet</name>
     <description>Timesheet application for tracking employee work hours</description>
 
     <properties>

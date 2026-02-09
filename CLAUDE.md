@@ -1,4 +1,4 @@
-# Timesheet Application
+# Ralph Timesheet
 
 ## Project Overview
 A timesheet application for tracking employee work hours against projects. Spring Boot REST API backend with a React frontend.
@@ -10,7 +10,7 @@ A timesheet application for tracking employee work hours against projects. Sprin
 
 ## Project Structure
 ```
-timesheet/
+ralph-timesheet/
   api/          # Spring Boot backend (Maven project)
   ui/           # React frontend (Vite + TypeScript)
   CLAUDE.md     # This file - project instructions
