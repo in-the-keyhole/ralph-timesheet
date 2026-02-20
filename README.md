@@ -6,7 +6,7 @@ A timesheet application for tracking employee work hours against projects — bu
 
 ## What Is Ralph Loop?
 
-[Ralph Loop](https://github.com/anthropics/claude-code-plugins) is a Claude Code plugin that enables an autonomous development loop. Once started, Claude Code reads a prompt file, executes the instructions, and repeats — allowing it to work through a sequence of tasks without manual intervention. In this project, Ralph Loop iterated through 19 user stories, implementing each one end-to-end: writing code, running tests, committing, and moving on to the next story.
+[Ralph Loop](https://github.com/snarktank/ralph) is a Claude Code plugin that enables an autonomous development loop. Once started, Claude Code reads a prompt file, executes the instructions, and repeats — allowing it to work through a sequence of tasks without manual intervention. In this project, Ralph Loop iterated through 19 user stories, implementing each one end-to-end: writing code, running tests, committing, and moving on to the next story.
 
 ## How the Project Was Executed
 
